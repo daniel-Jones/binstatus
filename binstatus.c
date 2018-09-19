@@ -14,6 +14,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
@@ -38,6 +39,21 @@ gettime(int *store)
 	store[1] = tm->tm_min;
 }
 
+void
+formatstring(char *status, int *time)
+{
+	char *env = getenv("binstatus");
+	if (strcmp(env, "dec") == 0)
+	{
+		snprintf(status, MAXLENGTH, "%02d:%02d", time[0], time[1]);
+	}
+	else
+	{
+		sprintf(status, "%05d %06d", dectobin(time[0]),
+		dectobin(time[1]));
+	}
+}
+
 int
 main(void)
 {
@@ -53,8 +69,7 @@ main(void)
 	while (1)
 	{
 		gettime(time);
-		sprintf(status, "%05d %06d", dectobin(time[0]),
-			dectobin(time[1]));
+		formatstring(status, time);
 		int res = XStoreName(dsp, DefaultRootWindow(dsp), status);
 		if (res == BadAlloc)
 		{
