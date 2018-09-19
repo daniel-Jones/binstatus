@@ -49,7 +49,7 @@ formatstring(char *status, int *time)
 	}
 	else
 	{
-		sprintf(status, "%05d %06d", dectobin(time[0]),
+		snprintf(status, MAXLENGTH, "%05d %06d", dectobin(time[0]),
 		dectobin(time[1]));
 	}
 }
