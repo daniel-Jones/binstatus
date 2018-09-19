@@ -43,14 +43,15 @@ void
 formatstring(char *status, int *time)
 {
 	char *env = getenv("binstatus");
-	if (strcmp(env, "dec") == 0)
+	if (!env || strcmp(env, "bin") == 0)
 	{
-		snprintf(status, MAXLENGTH, "%02d:%02d", time[0], time[1]);
-	}
-	else
-	{
+
 		snprintf(status, MAXLENGTH, "%05d %06d", dectobin(time[0]),
 		dectobin(time[1]));
+	}
+	else if (strcmp(env, "dec") == 0)
+	{
+		snprintf(status, MAXLENGTH, "%02d:%02d", time[0], time[1]);
 	}
 }
 
