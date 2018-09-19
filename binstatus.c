@@ -21,6 +21,7 @@
 #include <X11/Xlib.h>
 
 #define MAXLENGTH 256
+int binary = 1; /* 0 = decimal display, 1 = binary display */
 
 int
 dectobin(int dec)
@@ -42,22 +43,31 @@ gettime(int *store)
 void
 formatstring(char *status, int *time)
 {
-	char *env = getenv("binstatus");
-	if (!env || strcmp(env, "bin") == 0)
+	if (binary)
 	{
 
 		snprintf(status, MAXLENGTH, "%05d %06d", dectobin(time[0]),
 		dectobin(time[1]));
 	}
-	else if (strcmp(env, "dec") == 0)
+	else
 	{
 		snprintf(status, MAXLENGTH, "%02d:%02d", time[0], time[1]);
 	}
 }
 
 int
-main(void)
+main(int argc, char *argv[])
 {
+	if (argc >= 2)
+	{
+		if (strcmp(argv[1], "-d") == 0)
+			binary = 0;
+		else
+		{
+			printf("usage: %s [-b]\n", argv[0]);
+			exit(EXIT_SUCCESS);
+		}
+	}
 	int exitflag = EXIT_SUCCESS;
 	char status[MAXLENGTH];
 	int time[2];
