@@ -64,7 +64,7 @@ main(int argc, char *argv[])
 			binary = 0;
 		else
 		{
-			printf("usage: %s [-b]\n", argv[0]);
+			printf("usage: %s [-d]\n", argv[0]);
 			exit(EXIT_SUCCESS);
 		}
 	}
