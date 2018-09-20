@@ -81,20 +81,7 @@ main(int argc, char *argv[])
 	{
 		gettime(time);
 		formatstring(status, time);
-		int res = XStoreName(dsp, DefaultRootWindow(dsp), status);
-		if (res == BadAlloc)
-		{
-			fprintf(stderr, "X: unable to allocate source"
-						" or server memory.\n");
-			exitflag = EXIT_FAILURE;
-			break;
-		}
-		else if (res == BadWindow)
-		{
-			fprintf(stderr, "X: No default window found\n");
-			exitflag = EXIT_FAILURE;
-			break;
-		}
+		XStoreName(dsp, DefaultRootWindow(dsp), status);
 		XFlush(dsp);
 		sleep(1);
 	}
