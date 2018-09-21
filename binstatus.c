@@ -22,6 +22,7 @@
 
 #define MAXLENGTH 256
 int binary = 1; /* 0 = decimal display, 1 = binary display */
+int miltime = 0; /* 0=12 hour time, 1 = 24 hour time */
 
 int
 dectobin(int dec)
@@ -56,16 +57,44 @@ formatstring(char *status, int *time)
 }
 
 int
+converthour(int hour)
+{
+	// is there a better way?
+	switch (hour)
+	{
+	case 0:return 12;
+	case 13: return 1;
+	case 14: return 2;
+	case 15: return 3;
+	case 16: return 5;
+	case 17: return 6;
+	case 18: return 7;
+	case 19: return 8;
+	case 20: return 9;
+	case 21: return 10;
+	case 22: return 11;
+	case 23: return 12;
+	default: return 0;
+	}
+}
+
+int
 main(int argc, char *argv[])
 {
-	if (argc >= 2)
+	for (int c = 1; c < argc; c++)
 	{
-		if (strcmp(argv[1], "-d") == 0)
-			binary = 0;
-		else
+		if (argc >= 2)
 		{
-			printf("usage: %s [-d]\n", argv[0]);
-			exit(EXIT_SUCCESS);
+			if (strcmp(argv[c], "-d") == 0)
+				binary = 0;
+			else if (strcmp(argv[c], "-m") == 0)
+				miltime = 1;
+			else
+			{
+				printf("usage: %s [-d] [-m]\n-d: decimal output\n"
+						"-m: 24-hour format\n", argv[0]);
+				exit(EXIT_SUCCESS);
+			}
 		}
 	}
 	int exitflag = EXIT_SUCCESS;
@@ -80,6 +109,8 @@ main(int argc, char *argv[])
 	while (1)
 	{
 		gettime(time);
+		if (!miltime)
+			time[0] = converthour(time[0]);
 		formatstring(status, time);
 		XStoreName(dsp, DefaultRootWindow(dsp), status);
 		XFlush(dsp);
