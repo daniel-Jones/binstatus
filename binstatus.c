@@ -22,7 +22,7 @@
 
 #define MAXLENGTH 256
 int binary = 1; /* 0 = decimal display, 1 = binary display */
-int miltime = 0; /* 0=12 hour time, 1 = 24 hour time */
+int miltime = 0; /* 0 = 12 hour time, 1 = 24 hour time */
 
 int
 dectobin(int dec)
@@ -62,18 +62,18 @@ converthour(int hour)
 	// is there a better way?
 	switch (hour)
 	{
-	case 0:return 12;
+	case 0:	 return 12;
 	case 13: return 1;
 	case 14: return 2;
 	case 15: return 3;
-	case 16: return 5;
-	case 17: return 6;
-	case 18: return 7;
-	case 19: return 8;
-	case 20: return 9;
-	case 21: return 10;
-	case 22: return 11;
-	case 23: return 12;
+	case 16: return 4;
+	case 17: return 5;
+	case 18: return 6;
+	case 19: return 7;
+	case 20: return 8;
+	case 21: return 9;
+	case 22: return 10;
+	case 23: return 11;
 	default: return hour;
 	}
 }
