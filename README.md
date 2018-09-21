@@ -1,6 +1,6 @@
-This program sets your X servers root window name as the current time in 12-hour binary. This allows dwm (and possibly other) window managers use it in their status bar. I use it with dwm as a clock to practice recognising binary numbers quickly.
+This program sets your X servers root window name as the current time in 12-hour binary. This allows dwm to use it in their status bar. Other window managers may also use this string for something. I use it with dwm as a clock to practice recognising binary numbers quickly.
 
-argumewnts:
+arguments:
 
 ````-d: display time in decimal format (HH:MM)````
 
