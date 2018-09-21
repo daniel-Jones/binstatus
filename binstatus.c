@@ -74,7 +74,7 @@ converthour(int hour)
 	case 21: return 10;
 	case 22: return 11;
 	case 23: return 12;
-	default: return 0;
+	default: return hour;
 	}
 }
 
