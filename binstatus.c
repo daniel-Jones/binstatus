@@ -109,7 +109,7 @@ main(int argc, char *argv[])
 	while (1)
 	{
 		gettime(time);
-		if (!miltime)
+		if (!miltime && time[0] > 12)
 			time[0] = converthour(time[0]);
 		formatstring(status, time);
 		XStoreName(dsp, DefaultRootWindow(dsp), status);
