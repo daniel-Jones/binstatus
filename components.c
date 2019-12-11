@@ -52,21 +52,36 @@ converthour(int hour)
 char *currenttime(char *store, size_t size, int flag)
 {
 	int time[2];
+	char meridiem[3];
 	gettime(time);
+	if (flag & SHOWMERIDIEM)
+	{
+		meridiem[1] = 'M';
+		meridiem[2] = '\0';
+		if (time[0] < 12)
+			meridiem[0] = 'A';
+		else
+			meridiem[0] = 'P';
+
+	}
 	if (flag & NORMALTIME)
 	{
-		if (time[0] > 12)
+		if (time[0] == 0)
+			time[0] = 12;
+		else if (time[0] > 12)
 			time[0] = converthour(time[0]);
 	}
 	if (flag & BINARYTIME)
 	{
-		snprintf(store, size, "%05d:%05d ", dectobin(time[0]),
-						    dectobin(time[1]));
+		snprintf(store, size, "%05d:%05d %s ", dectobin(time[0]),
+						    dectobin(time[1]),
+						    meridiem);
 	}
 	/* military time is the default, so we need not do anything */
 	else
 	{
-		snprintf(store, size, "%02d:%02d ", time[0], time[1]);
+		snprintf(store, size, "%02d:%02d %s ", time[0], time[1],
+						    meridiem);
 	}
 	return store;
 }

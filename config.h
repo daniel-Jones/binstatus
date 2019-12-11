@@ -23,6 +23,7 @@ enum flag
 	NORMALTIME 	= 1<<1,
 	BINARYTIME 	= 1<<2,
 	MILITARYTIME	= 1<<3,
+	SHOWMERIDIEM	= 1<<4,
 };
 
 struct component
@@ -37,7 +38,7 @@ struct component
  */
 static const struct component components[] ={
 /*	function	flag	*/
-	{currenttime,	NORMALTIME},
+	{currenttime,	NORMALTIME|SHOWMERIDIEM},
 	{battery,	0},
 	{charging,	0},
 };
