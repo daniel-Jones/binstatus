@@ -19,71 +19,13 @@
 #include <unistd.h>
 #include <time.h>
 #include <X11/Xlib.h>
-
-#define MAXLENGTH 256
-int binary = 1; /* 0 = decimal display, 1 = binary display */
-int miltime = 0; /* 0 = 12 hour time, 1 = 24 hour time */
+#include "components.h"
+#include "config.h"
 
 int
-dectobin(int dec)
+main(void)
 {
-	if (dec == 0) return 0;
-	if (dec == 1) return 1;
-	return (dec % 2) + 10 * dectobin(dec / 2);
-}
-
-void
-gettime(int *store)
-{
-	time_t t = time(NULL);
-	struct tm *tm = localtime(&t);
-	store[0] = tm->tm_hour;
-	store[1] = tm->tm_min;
-}
-
-void
-formatstring(char *status, int *time)
-{
-	if (binary)
-	{
-
-		snprintf(status, MAXLENGTH, "%05d %06d", dectobin(time[0]),
-		dectobin(time[1]));
-	}
-	else
-	{
-		snprintf(status, MAXLENGTH, "%02d:%02d", time[0], time[1]);
-	}
-}
-
-int
-converthour(int hour)
-{
-	return (hour - 12 < 0) ? 0 : hour - 12;
-}
-
-int
-main(int argc, char *argv[])
-{
-	for (int c = 1; c < argc; c++)
-	{
-		if (argc >= 2)
-		{
-			if (strcmp(argv[c], "-d") == 0)
-				binary = 0;
-			else if (strcmp(argv[c], "-m") == 0)
-				miltime = 1;
-			else
-			{
-				printf("usage: %s [-d] [-m]\n-d: decimal output\n"
-						"-m: 24-hour format\n", argv[0]);
-				exit(EXIT_SUCCESS);
-			}
-		}
-	}
-	int exitflag = EXIT_SUCCESS;
-	char status[MAXLENGTH];
-	int time[2];
+	char status[MAXLENGTH] = "";
 	Display *dsp = XOpenDisplay(NULL);
 	if(!dsp)
 	{
@@ -92,14 +34,16 @@ main(int argc, char *argv[])
 	}
 	while (1)
 	{
-		gettime(time);
-		if (!miltime && time[0] > 12)
-			time[0] = converthour(time[0]);
-		formatstring(status, time);
+		memset(status, 0, sizeof(status));
+		for (size_t i = 0; i < sizeof(components)/sizeof(components[0]); i++)
+		{
+			char store[20];
+			strncat(status, components[i].function(store, sizeof(store), components[i].flag), sizeof(store));
+		}
 		XStoreName(dsp, DefaultRootWindow(dsp), status);
 		XFlush(dsp);
 		sleep(1);
 	}
 	XCloseDisplay(dsp);
-	return exitflag;
+	return 0;
 }

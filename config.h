@@ -35,7 +35,7 @@ struct component
  * add or remove components as desired
  * components are shown in the order of this array
  */
-struct component components[] ={
+static const struct component components[] ={
 /*	function	flag	*/
 	{currenttime,	NORMALTIME},
 	{battery,	0},

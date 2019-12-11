@@ -14,6 +14,8 @@
  */
 
 #include "components.h"
+#include "config.h"
+
 int
 dectobin(int dec)
 {
@@ -51,8 +53,22 @@ char *currenttime(char *store, size_t size, int flag)
 {
 	int time[2];
 	gettime(time);
-	snprintf(store, size, "%02d:%02d ", time[0], time[1]);
-	return store;	
+	if (flag & NORMALTIME)
+	{
+		if (time[0] > 12)
+			time[0] = converthour(time[0]);
+	}
+	if (flag & BINARYTIME)
+	{
+		snprintf(store, size, "%05d:%05d ", dectobin(time[0]),
+						    dectobin(time[1]));
+	}
+	/* military time is the default, so we need not do anything */
+	else
+	{
+		snprintf(store, size, "%02d:%02d ", time[0], time[1]);
+	}
+	return store;
 }
 
 char *battery(char *store, size_t size, int flag)
@@ -83,7 +99,17 @@ char *charging(char *store, size_t size, int flag)
 	}
 	fgets(cap, 15, state);
 	eat(cap, strlen(cap));
+	/* my thinkpad says "Unknown" when charged ... */
+	if (strcmp(cap, "Unknown") == 0) strcpy(cap, "⚡F");
+	if (strcmp(cap, "Charged") == 0) strcpy(cap, "⚡F");
+	if (strcmp(cap, "Charging") == 0) strcpy(cap, "⚡C");
+	if (strcmp(cap, "Discharging") == 0) strcpy(cap, "⚡D");
 	fclose(state);
 	snprintf(store, size, "%s ", cap);
+	return store;
+}
+
+char *remainingtime(char *store, size_t size, int flag)
+{
 	return store;
 }

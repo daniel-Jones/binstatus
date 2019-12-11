@@ -25,5 +25,6 @@
 char *currenttime(char *store, size_t size, int flag);
 char *battery(char *store, size_t size, int flag);
 char *charging(char *store, size_t size, int flag);
+char *remainingtime(char *store, size_t size, int flag);
 
 #endif
