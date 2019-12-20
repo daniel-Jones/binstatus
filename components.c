@@ -24,12 +24,12 @@ dectobin(int dec)
 	return (dec % 2) + 10 * dectobin(dec / 2);
 }
 
-char *eat(char *food, size_t len)
+char *eatnonascii(char *food, size_t len)
 {
-	if (len == 0) return food;
-	while (food[len-1] == '\n')
+	if (len <= 0) return food;
+	while (food[len-1] < 32 || food[len-1] > 126)
 	{
-		food[len-1] = '\0';
+		food[--len] = '\0';
 	}
 	return food;
 }
@@ -73,14 +73,14 @@ char *currenttime(char *store, size_t size, int flag)
 	}
 	if (flag & BINARYTIME)
 	{
-		snprintf(store, size, "%05d:%05d %s ", dectobin(time[0]),
+		snprintf(store, size, "%05d:%05d%s ", dectobin(time[0]),
 						    dectobin(time[1]),
 						    meridiem);
 	}
 	/* military time is the default, so we need not do anything */
 	else
 	{
-		snprintf(store, size, "%02d:%02d %s ", time[0], time[1],
+		snprintf(store, size, "%02d:%02d%s ", time[0], time[1],
 						    meridiem);
 	}
 	return store;
@@ -113,18 +113,48 @@ char *charging(char *store, size_t size, int flag)
 		return "error ";
 	}
 	fgets(cap, 15, state);
-	eat(cap, strlen(cap));
+	eatnonascii(cap, strlen(cap));
 	/* my thinkpad says "Unknown" when charged ... */
-	if (strcmp(cap, "Unknown") == 0) strcpy(cap, "⚡F");
-	if (strcmp(cap, "Charged") == 0) strcpy(cap, "⚡F");
-	if (strcmp(cap, "Charging") == 0) strcpy(cap, "⚡C");
-	if (strcmp(cap, "Discharging") == 0) strcpy(cap, "⚡D");
+	if (strcmp(cap, "Unknown") == 0) strcpy(cap, "F");
+	if (strcmp(cap, "Charged") == 0) strcpy(cap, "F");
+	if (strcmp(cap, "Charging") == 0) strcpy(cap, "C");
+	if (strcmp(cap, "Discharging") == 0) strcpy(cap, "D");
 	fclose(state);
 	snprintf(store, size, "%s ", cap);
 	return store;
 }
 
-char *remainingtime(char *store, size_t size, int flag)
+char *volume(char *store, size_t size, int flag)
 {
+	// TODO
+	return store;
+}
+
+char *cputemp(char *store, size_t size, int flag)
+{
+	FILE *cpufile;
+	char temp[15];
+	int t;
+	cpufile = fopen(TEMPFILE, "r");
+	if (!cpufile)
+	{
+		fprintf(stderr, "cannot read CPU temp\n");
+		return "error ";
+	}
+	fgets(temp, 4, cpufile);
+	eatnonascii(temp, strlen(temp));
+	if (temp[2] == '0')
+		temp[2] = '\0';
+	fclose(cpufile);
+
+	t = atoi(temp);
+
+	if (flag & FARENHEIT)
+	{
+		t = (t*9)/5+32;	
+		snprintf(store, size, "%d°F ", t);
+	}
+	else
+		snprintf(store, size, "%d°C ", t);
 	return store;
 }

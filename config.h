@@ -16,6 +16,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define SLEEPTIME 5 // number of seconds to sleep before each update
+#define TEMPFILE "/sys/class/thermal/thermal_zone0/temp"
 #define MAXLENGTH 256
 
 enum flag
@@ -25,6 +27,7 @@ enum flag
 	BINARYTIME 	= 1<<2,
 	MILITARYTIME	= 1<<3,
 	SHOWMERIDIEM	= 1<<4,
+	FARENHEIT	= 1<<5,
 };
 
 struct component
@@ -42,6 +45,7 @@ static const struct component components[] ={
 	{currenttime,	NORMALTIME|SHOWMERIDIEM},
 	{battery,	NONE},
 	{charging,	NONE},
+	{cputemp,	NONE},
 };
 
 #endif

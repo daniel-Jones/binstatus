@@ -42,7 +42,7 @@ main(void)
 		}
 		XStoreName(dsp, DefaultRootWindow(dsp), status);
 		XFlush(dsp);
-		sleep(1);
+		sleep(SLEEPTIME);
 	}
 	XCloseDisplay(dsp);
 	return 0;
