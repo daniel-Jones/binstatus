@@ -20,7 +20,7 @@
 #define TEMPFILE "/sys/class/thermal/thermal_zone0/temp"
 #define MAXLENGTH 256
 
-#define LOWBATT 65
+#define LOWBATT 20
 #define ARG_LIMIT 10
 #define BUFF_SIZE 512
 
