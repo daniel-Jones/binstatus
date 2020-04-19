@@ -13,8 +13,58 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <unistd.h>
+#include <signal.h>
 #include "components.h"
 #include "config.h"
+
+int
+run(const char *program)
+{
+	pid_t pid = fork();
+	if (pid == 0)
+	{
+		// child process, we don't want to ignore signals
+		signal(SIGCHLD, SIG_DFL);
+		/*
+		 * we don't want std{out,err} to be associated with the terminal,
+		 * but we also don't want to close it to avoid the file descriptors
+		 * being re-used potentially leading to problems, so reopen them to /dev/null
+		 */
+		freopen("/dev/null", "w", stdout);
+		freopen("/dev/null", "w", stderr);
+		char *args[ARG_LIMIT];
+		char *buff = malloc(BUFF_SIZE);
+		if (buff == NULL)
+		{
+			perror("malloc");
+			return -1;
+		}
+		/*
+		 * the program we're calling might have arguments,
+		 * so we tokenise the string and add each part to an array
+		 * that we will use in execvp
+		 */
+		strncpy(buff, program, BUFF_SIZE-1);
+		char *t = strtok(buff, " ");
+		int z = 0;
+		while (t != NULL && z < ARG_LIMIT-1) // save a position for NULL
+		{
+			args[z] = t;
+			t = strtok(NULL, " ");
+			z++;
+		}
+		args[z] = (char *)0;
+		execvp(args[0], args);
+		_exit(1);
+	}
+	else if (pid == -1)
+	{
+		perror("fork");
+		return -1;
+	}
+	return 1;
+}
 
 int
 dectobin(int dec)
@@ -86,6 +136,8 @@ char *currenttime(char *store, size_t size, int flag)
 	return store;
 }
 
+int has_low_batt = 0;
+
 char *battery(char *store, size_t size, int flag)
 {
 	FILE *capacity;
@@ -98,7 +150,19 @@ char *battery(char *store, size_t size, int flag)
 	}
 	fread(cap, 1, 4, capacity);
 	fclose(capacity);
-	snprintf(store, size, "%d%% ", atoi(cap));
+	int percent = atoi(cap);
+
+	if ( !has_low_batt && percent < LOWBATT)
+	{
+		run(LOWBATTERY);
+		has_low_batt = 1;
+	}
+	else if (has_low_batt && percent > LOWBATT)
+	{
+		has_low_batt = 0;
+	}
+
+	snprintf(store, size, "%d%% ", percent);
 	return store;
 }
 

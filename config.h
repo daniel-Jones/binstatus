@@ -20,6 +20,12 @@
 #define TEMPFILE "/sys/class/thermal/thermal_zone0/temp"
 #define MAXLENGTH 256
 
+#define LOWBATT 65
+#define ARG_LIMIT 10
+#define BUFF_SIZE 512
+
+#define LOWBATTERY "sh -c /home/daniel_j/programming/bash/lowbattery.sh"
+
 enum flag
 {
 	NONE		= 0,
@@ -42,10 +48,10 @@ struct component
  */
 static const struct component components[] ={
 /*	function	flag	*/
-	{currenttime,	NORMALTIME|SHOWMERIDIEM},
 	{battery,	NONE},
 	{charging,	NONE},
 	{cputemp,	NONE},
+	{currenttime,	NORMALTIME|SHOWMERIDIEM},
 };
 
 #endif
