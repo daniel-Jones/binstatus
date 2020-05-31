@@ -151,7 +151,8 @@ char *battery(char *store, size_t size, int flag)
 	fread(cap, 1, 4, capacity);
 	fclose(capacity);
 	int percent = atoi(cap);
-
+	if (percent != 100)
+		percent++;
 	if ( !has_low_batt && percent < LOWBATT)
 	{
 		run(LOWBATTERY);
